@@ -15,10 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from todo.views import ArticleAPIView
+from todo.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/articlelist/', ArticleAPIView.as_view()),
-    path('api/v1/articlelist/<int:pk>/', ArticleAPIView.as_view()),
+    path('api/v1/articlelist/', ArticleAPIList.as_view()),
+    path('api/v1/articlelist/<int:pk>/', ArticleAPIUpdate.as_view()),
+    path('api/v1/articledetail/<int:pk>/', ArticleAPIDetailView.as_view()),
+    path('api/v1/executorlist/', ExecutorAPIList.as_view()),
+    path('api/v1/executorstasks/<int:pk>/', ExecutorsTasksAPIList.as_view()),
 ]

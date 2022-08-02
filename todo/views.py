@@ -6,47 +6,36 @@ from .models import *
 from .serializers import *
 
 
-class ArticleAPIView (APIView):
-    def get(self, request):
+class ArticleAPIList(generics.ListCreateAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
+
+    def get_queryset(self):
         queryset = Article.objects.all()
-        return Response({'article': ArticleSerializer(queryset, many=True).data})
+        return queryset.order_by('createdAt')
 
 
-    def post(self, request):
-        serializer = ArticleSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
 
-        return Response({'article': serializer.data})
+class ArticleAPIUpdate(generics.UpdateAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
 
 
-    def put(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', None)
-        if not pk:
-            return Response({"error": "Method PUT not allowed1"})
-
-        try:
-            instance = Article.objects.get(pk=pk)
-        except:
-            return Response({"error": "Object doesn't exists"})
-
-        serializer = ArticleSerializer(data=request.data, instance=instance)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response({'article': serializer.data})
+class ArticleAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
 
 
-    def delete(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', None)
-        if not pk:
-            return Response({"error": "Method DELETE not allowed1"})
+class ExecutorAPIList(generics.ListCreateAPIView):
+    queryset = Executors.objects.all()
+    serializer_class = ExecutorSerializer
 
-        try:
-            instance = Article.objects.get(pk=pk)
-        except:
-            return Response({"error": "Object doesn't exists"})
 
-        instance.delete()
+class ExecutorsTasksAPIList(generics.ListCreateAPIView):
+    queryset = Article.objects.all()
+    serializer_class = ArticleSerializer
 
-        return Response({'article': "delete article " + str(pk)})
+    def get_queryset(self):
+        executor_id = self.kwargs['pk']
+        return Article.objects.filter(executor__id=executor_id)
+
