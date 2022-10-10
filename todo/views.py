@@ -1,41 +1,23 @@
-from django.shortcuts import render
-from rest_framework import generics
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .models import *
+from rest_framework.mixins import ListModelMixin
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
+
 from .serializers import *
 
 
-class ArticleAPIList(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
+class ArticleViewSet(ModelViewSet):
+    queryset = Article.objects.all().order_by('createdAt')
     serializer_class = ArticleSerializer
+    # permission_classes = (IsAuthenticated, )
 
-    def get_queryset(self):
-        queryset = Article.objects.all()
-        return queryset.order_by('createdAt')
-
-
-
-class ArticleAPIUpdate(generics.UpdateAPIView):
-    queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
+    def filter_queryset(self, queryset):
+        executor_id = self.request.query_params.get('executor')
+        if executor_id:
+            queryset = queryset.filter(executor__id=executor_id)
+        return queryset
 
 
-class ArticleAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
-
-
-class ExecutorAPIList(generics.ListCreateAPIView):
-    queryset = Executors.objects.all()
+class ExecutorViewSet(ListModelMixin, GenericViewSet):
+    queryset = MyUser.objects.all().order_by('id')
     serializer_class = ExecutorSerializer
-
-
-class ExecutorsTasksAPIList(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
-    serializer_class = ArticleSerializer
-
-    def get_queryset(self):
-        executor_id = self.kwargs['pk']
-        return Article.objects.filter(executor__id=executor_id)
-
+    # permission_classes = (IsAuthenticated,)

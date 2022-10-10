@@ -10,5 +10,5 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class ExecutorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Executors
-        fields = ("id", "name")
+        model = MyUser
+        fields = ("id", "name", "surname")

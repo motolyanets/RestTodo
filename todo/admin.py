@@ -8,4 +8,5 @@ class ArticleAdmin(admin.ModelAdmin):
         model = Article
 
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(Executors)
+# admin.site.register(Executors)
+admin.site.register(MyUser)
